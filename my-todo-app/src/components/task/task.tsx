@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { TaskType } from '../../types/task';
 
 
+
 type TaskProps = {
     task: TaskType;
     toggleTask: (id: number) => void;
@@ -70,7 +71,7 @@ function Task({ task, toggleTask, deleteTask, editTask }: TaskProps): JSX.Elemen
                             <div className="card__dates">
                                 <div className="card__date-deadline">
                                     <p className="card__input-deadline-wrap">
-                                        <span className="card__date">{`${task.date.date()} ${task.date.format('MMM')} ${task.date.format('HH:mm')}`}</span>
+                                        <span className="card__date">{` ${task.date.format('DD-MMM')} ${task.date.format('HH:mm')}`}</span>
                                     </p>
                                 </div>
                             </div>

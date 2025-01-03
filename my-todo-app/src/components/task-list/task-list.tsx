@@ -1,6 +1,7 @@
 
 import Task from '../task/task';
 import { TaskType } from '../../types/task';
+import SortControls from '../sort-controls/sort-controls';
 
 
 
@@ -10,17 +11,16 @@ type TaskListProps = {
     deleteTask: (id: number) => void;
     editTask: (taskId: number, newText: string) => void;
     toggleSortOrder: () => void;
+    loadMoreTasks: () => void;
+    hasMore: boolean;
 
 }
 
-function TaskList({ tasks, toggleTask, deleteTask, editTask, toggleSortOrder }: TaskListProps): JSX.Element {
+function TaskList({ tasks, toggleTask, deleteTask, editTask, toggleSortOrder, loadMoreTasks, hasMore }: TaskListProps): JSX.Element {
     return (
 
         <section className="board container">
-            <div className="board__sort-list">
-                <button className="board__sort-item">SORT BY DEFAULT</button>
-                <button className="board__sort-item" onClick={toggleSortOrder}>SORT BY DATE </button>
-            </div>
+            <SortControls toggleSortOrder={toggleSortOrder} />
             <div className="board__tasks">
                 {tasks.map(task => (
                     <Task
@@ -32,7 +32,11 @@ function TaskList({ tasks, toggleTask, deleteTask, editTask, toggleSortOrder }: 
 
                 ))}
             </div>
-            <button className="load-more" type="button">load more</button>
+            {hasMore && (
+                <button className="load-more" type="button" onClick={loadMoreTasks}>
+                    Load More
+                </button>
+            )}
         </section>
     );
 };

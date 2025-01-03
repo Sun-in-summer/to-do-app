@@ -6,6 +6,7 @@ import { TaskType } from './types/task';
 import { Filter } from './types/filter';
 import dayjs from 'dayjs';
 import { SortOrder } from './types/sort';
+import { DEFAULT_TASK_QTY_ON_PAGE } from './const';
 
 
 
@@ -13,17 +14,36 @@ function App(): JSX.Element {
   const [tasks, setTasks] = useState<TaskType[]>([]);
   const [filter, setFilter] = useState<Filter>(Filter.All);
   const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.Asc);
+  const [visibleTasks, setVisibleTasks] = useState(DEFAULT_TASK_QTY_ON_PAGE);
+
+  // useEffect(() => {
+  //   const savedTasks = localStorage.getItem('tasks');
+  //   if (savedTasks) {
+  //     setTasks(JSON.parse(savedTasks));
+  //   }
+  // }, []);
 
   useEffect(() => {
     const savedTasks = localStorage.getItem('tasks');
     if (savedTasks) {
-      setTasks(JSON.parse(savedTasks));
+      try {
+        const parsedTasks = JSON.parse(savedTasks);
+        console.log('Loaded tasks:', parsedTasks);
+        setTasks(parsedTasks);
+      } catch (error) {
+        console.error('Error parsing tasks:', error);
+      }
     }
   }, []);
 
   useEffect(() => {
+    console.log('Tasks updated:', tasks);
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
+
+  const loadMoreTasks = () => {
+    setVisibleTasks((prev) => prev + DEFAULT_TASK_QTY_ON_PAGE);
+  };
 
   const sortTasksByDate = (tasks: TaskType[]) => {
     return tasks.sort((a, b) => {
@@ -46,7 +66,7 @@ function App(): JSX.Element {
       completed: false,
       date: dayjs(),
     };
-    setTasks([...tasks, newTask]);
+    setTasks(prevTasks => [...prevTasks, newTask]);
   };
 
   const toggleTask = (taskId: number) => {
@@ -76,17 +96,32 @@ function App(): JSX.Element {
 
   const filteredTasks = tasks.filter(filterMap[filter]);
   const filteredAndSortedTasks = sortTasksByDate(filteredTasks);
+  const slicedTasks = filteredAndSortedTasks.slice(0, visibleTasks);
+
+  const taskCounts = {
+    [Filter.All]: tasks.length,
+    [Filter.Completed]: tasks.filter(filterMap[Filter.Completed]).length,
+    [Filter.Incomplete]: tasks.filter(filterMap[Filter.Incomplete]).length,
+  };
+
+  const hasMore = visibleTasks < filteredAndSortedTasks.length;
+  console.log(visibleTasks, filteredAndSortedTasks.length, hasMore);
 
   return (
     <div>
       <TaskInput addTask={addTask} />
-      <TaskFilter setFilter={setFilter} />
+      <TaskFilter
+        filter={filter}
+        setFilter={setFilter}
+        taskCounts={taskCounts} />
       <TaskList
-        tasks={filteredAndSortedTasks}
+        tasks={slicedTasks}
         toggleTask={toggleTask}
         deleteTask={deleteTask}
         editTask={editTask}
-        toggleSortOrder={toggleSortOrder} />
+        toggleSortOrder={toggleSortOrder}
+        hasMore={hasMore}
+        loadMoreTasks={loadMoreTasks} />
     </div>
   );
 };

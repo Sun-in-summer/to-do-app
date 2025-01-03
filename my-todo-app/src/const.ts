@@ -1,0 +1,1 @@
+export const DEFAULT_TASK_QTY_ON_PAGE = 8;
