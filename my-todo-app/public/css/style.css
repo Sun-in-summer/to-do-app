@@ -212,7 +212,7 @@ body {
 .card__control {
   display: flex;
   align-items: baseline;
-  justify-items: space-between;
+  justify-content: space-between;
   opacity: 1;
   margin-bottom: 8px;
   transition: opacity 0.3s ease-out;
@@ -246,9 +246,7 @@ span.card__btn {
   margin-right: 9px;
 }
 
-.card__btn--archive {
-  margin-right: auto;
-}
+
 
 .card__btn--disabled {
   color: #e7e3e3;
