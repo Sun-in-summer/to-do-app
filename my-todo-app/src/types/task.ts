@@ -4,6 +4,6 @@ export type TaskType = {
     id: number;
     text: string;
     completed: boolean;
-    date: Dayjs;
+    date: Dayjs | undefined;
 }
 

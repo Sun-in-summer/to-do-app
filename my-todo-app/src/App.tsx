@@ -16,30 +16,35 @@ function App(): JSX.Element {
   const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.Asc);
   const [visibleTasks, setVisibleTasks] = useState(DEFAULT_TASK_QTY_ON_PAGE);
 
-  // useEffect(() => {
-  //   const savedTasks = localStorage.getItem('tasks');
-  //   if (savedTasks) {
-  //     setTasks(JSON.parse(savedTasks));
-  //   }
-  // }, []);
+
 
   useEffect(() => {
     const savedTasks = localStorage.getItem('tasks');
+    console.log('savedTasks', savedTasks);
     if (savedTasks) {
-      try {
-        const parsedTasks = JSON.parse(savedTasks);
-        console.log('Loaded tasks:', parsedTasks);
-        setTasks(parsedTasks);
-      } catch (error) {
-        console.error('Error parsing tasks:', error);
-      }
+      const parsedTasks = JSON.parse(savedTasks);
+
+      const tasksWithDayjs = parsedTasks.map((task: TaskType) => ({
+        ...task,
+        date: dayjs(task.date),
+      }));
+
+      setTasks(tasksWithDayjs);
     }
   }, []);
 
+
   useEffect(() => {
-    console.log('Tasks updated:', tasks);
-    localStorage.setItem('tasks', JSON.stringify(tasks));
+
+    if (tasks.length) {
+      console.log('tasks.length', tasks.length)
+
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+
+    }
   }, [tasks]);
+
+
 
   const loadMoreTasks = () => {
     setVisibleTasks((prev) => prev + DEFAULT_TASK_QTY_ON_PAGE);
@@ -66,7 +71,8 @@ function App(): JSX.Element {
       completed: false,
       date: dayjs(),
     };
-    setTasks(prevTasks => [...prevTasks, newTask]);
+    setTasks([...tasks, newTask]);
+    console.log('+');
   };
 
   const toggleTask = (taskId: number) => {
@@ -93,6 +99,8 @@ function App(): JSX.Element {
     [Filter.Incomplete]: (task: TaskType) => !task.completed,
     [Filter.All]: () => true,
   };
+
+
 
   const filteredTasks = tasks.filter(filterMap[filter]);
   const filteredAndSortedTasks = sortTasksByDate(filteredTasks);
