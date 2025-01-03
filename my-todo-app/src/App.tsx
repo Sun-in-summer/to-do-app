@@ -20,7 +20,6 @@ function App(): JSX.Element {
 
   useEffect(() => {
     const savedTasks = localStorage.getItem('tasks');
-    console.log('savedTasks', savedTasks);
     if (savedTasks) {
       const parsedTasks = JSON.parse(savedTasks);
 
@@ -68,7 +67,7 @@ function App(): JSX.Element {
       date: dayjs(),
     };
     setTasks([...tasks, newTask]);
-    console.log('+');
+
   };
 
   const toggleTask = (taskId: number) => {
@@ -119,7 +118,6 @@ function App(): JSX.Element {
   };
 
   const hasMore = visibleTasks < filteredAndSortedTasks.length;
-  console.log(visibleTasks, filteredAndSortedTasks.length, hasMore);
 
   return (
     <div>
