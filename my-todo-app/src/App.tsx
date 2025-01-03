@@ -35,12 +35,8 @@ function App(): JSX.Element {
 
 
   useEffect(() => {
-
     if (tasks.length) {
-      console.log('tasks.length', tasks.length)
-
       localStorage.setItem('tasks', JSON.stringify(tasks));
-
     }
   }, [tasks]);
 
@@ -82,7 +78,17 @@ function App(): JSX.Element {
   };
 
   const deleteTask = (taskId: number) => {
-    setTasks(tasks.filter(task => task.id !== taskId));
+    setTasks((prevTasks) => {
+      const updatedTasks = prevTasks.filter(task => task.id !== taskId);
+      setVisibleTasks((prevVisible) => {
+        if (updatedTasks.length < DEFAULT_TASK_QTY_ON_PAGE) {
+          return DEFAULT_TASK_QTY_ON_PAGE;
+        } else {
+          return Math.min(prevVisible, updatedTasks.length);
+        }
+      });
+      return updatedTasks;
+    });
   };
 
   const editTask = (taskId: number, newText: string) => {
